@@ -551,7 +551,7 @@ function openDetail(o,{fromMap=false}={}){
   if(!isWide()) setSnap("half");
   if(highlight) map.removeLayer(highlight);
   if(o.la!=null){
-    highlight=L.circleMarker([o.la,o.lo],{radius:13,weight:3,color:g.color,fillColor:g.color,fillOpacity:.25,interactive:false}).addTo(map);
+    highlight=L.circleMarker([o.la,o.lo],{radius:13,weight:3,color:g.color,fillColor:g.color,fillOpacity:.25,interactive:false,renderer}).addTo(map);
     const z=Math.max(map.getZoom(),fromMap?map.getZoom():14);
     centerOn([o.la,o.lo],z);
   }
@@ -654,7 +654,7 @@ async function drawRoute(o){
     const j=await (await fetch(`${OSRM}/route/v1/driving/${origin[1]},${origin[0]};${o.lo},${o.la}?overview=full&geometries=geojson`)).json();
     if(j.code!=="Ok") throw new Error(j.code);
     if(routeLayer) map.removeLayer(routeLayer);
-    routeLayer=L.geoJSON(j.routes[0].geometry,{style:{color:getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()||"#0a5c8a",weight:6,opacity:.85,lineCap:"round"}}).addTo(map);
+    routeLayer=L.geoJSON(j.routes[0].geometry,{renderer,interactive:false,style:{color:getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()||"#0a5c8a",weight:6,opacity:.85,lineCap:"round"}}).addTo(map);
     if(!isWide()) setSnap("peek");
     map.fitBounds(routeLayer.getBounds(),{paddingTopLeft:[isWide()?430:24,60],paddingBottomRight:[24,visibleSheet()+24]});
     distances[o.c]={km:j.routes[0].distance/1000,min:j.routes[0].duration/60};
